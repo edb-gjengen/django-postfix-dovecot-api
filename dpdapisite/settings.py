@@ -1,6 +1,4 @@
 """
-Django settings for pfrsite project.
-
 For more information on this file, see
 https://docs.djangoproject.com/en/1.7/topics/settings/
 
@@ -38,6 +36,11 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 )
 
+INSTALLED_APPS += (
+    'rest_framework',
+    'dpdapi',
+)
+
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -48,9 +51,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'pfrsite.urls'
+ROOT_URLCONF = 'dpdapisite.urls'
 
-WSGI_APPLICATION = 'pfrsite.wsgi.application'
+WSGI_APPLICATION = 'dpdapisite.wsgi.application'
 
 
 # Database
@@ -68,7 +71,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Oslo'
 
 USE_I18N = True
 
@@ -81,3 +84,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
