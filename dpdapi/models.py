@@ -24,7 +24,7 @@ class Alias(BaseModel):
 
 
 class Domain(BaseModel):
-    name = models.CharField(max_length=1000, unique=True)
+    name = models.CharField(max_length=254, unique=True)
 
     def __unicode__(self):
         return self.name
