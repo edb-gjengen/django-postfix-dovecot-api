@@ -21,6 +21,11 @@ Then you can do
 
 # TODO
 - Alias should only allow unique (source,destination) tuples
+- lowercase domain, alias and user on save
 
 # TODO later
 - Create domain dir for dovecot?
+
+# Inspiration:
+- http://modoboa.readthedocs.org/
+- https://github.com/lgunsch/django-vmail
