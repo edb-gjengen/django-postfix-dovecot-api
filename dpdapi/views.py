@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status, filters, viewsets
 
-from dpdapi.filters import AliasRegexFilter
+from dpdapi.filters import AliasRegexFilterBackend
 from dpdapi.models import Alias, Domain, User
 from dpdapi.serializers import AliasSerializer, AliasIdSerializer, DomainSerializer, UserSerializer
 
@@ -18,7 +18,7 @@ class AliasViewSet(viewsets.ModelViewSet):
     queryset = Alias.objects.all()
     serializer_class = AliasSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = (filters.DjangoFilterBackend, AliasRegexFilter)
+    filter_backends = (filters.DjangoFilterBackend, AliasRegexFilterBackend)
     filter_fields = ('domain', 'domain__name',)
 
     @list_route(methods=['post'])

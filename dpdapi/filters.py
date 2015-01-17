@@ -1,6 +1,7 @@
 import django_filters
 
 from dpdapi.models import Alias
+from rest_framework.filters import BaseFilterBackend
 
 
 class AliasRegexFilter(django_filters.FilterSet):
@@ -9,3 +10,8 @@ class AliasRegexFilter(django_filters.FilterSet):
 
     class Meta:
         model = Alias
+
+
+class AliasRegexFilterBackend(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        return AliasRegexFilter(request.query_params, queryset=queryset).qs
