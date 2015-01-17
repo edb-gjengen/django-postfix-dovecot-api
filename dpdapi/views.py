@@ -56,6 +56,8 @@ class DomainViewSet(viewsets.ModelViewSet):
     queryset = Domain.objects.all()
     serializer_class = DomainSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_fields = ('name',)
 
 
 class UserViewSet(viewsets.ModelViewSet):
