@@ -19,7 +19,7 @@ class AliasViewSet(viewsets.ModelViewSet):
     serializer_class = AliasSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = (filters.DjangoFilterBackend, AliasRegexFilter)
-    filter_fields = ('domain', 'domain__name', 'regex')
+    filter_fields = ('domain', 'domain__name', 'source_regex')
 
     @list_route(methods=['post'])
     def create_bulk(self, request):
