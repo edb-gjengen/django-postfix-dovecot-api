@@ -8,6 +8,12 @@ class AliasSerializer(serializers.ModelSerializer):
         model = Alias
 
 
+class AliasDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Alias
+        validators = []  # No Unique togheter check on deletion
+
+
 class DomainSerializer(serializers.ModelSerializer):
     class Meta:
         model = Domain

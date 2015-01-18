@@ -19,8 +19,15 @@ class Alias(BaseModel):
     def __unicode__(self):
         return "{}={}".format(self.source, self.destination)
 
+    def save(self, *args, **kwargs):
+        self.source = self.source.lower()
+        self.destination = self.destination.lower()
+
+        super(Alias, self).save(*args, **kwargs)
+
     class Meta:
         verbose_name_plural = 'aliases'
+        unique_together = ('source', 'destination', 'domain')
 
 
 class Domain(BaseModel):
@@ -28,6 +35,11 @@ class Domain(BaseModel):
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        self.name = self.name.lower()
+
+        super(Domain, self).save(*args, **kwargs)
 
 
 class User(BaseModel):
@@ -37,4 +49,9 @@ class User(BaseModel):
 
     def __unicode__(self):
         return self.email
+
+    def save(self, *args, **kwargs):
+        self.email = self.email.lower()
+
+        super(User, self).save(*args, **kwargs)
 

@@ -9,7 +9,7 @@ from rest_framework import status, filters, viewsets
 
 from dpdapi.filters import AliasRegexFilterBackend
 from dpdapi.models import Alias, Domain, User
-from dpdapi.serializers import AliasSerializer, DomainSerializer, UserSerializer
+from dpdapi.serializers import AliasSerializer, AliasDeleteSerializer, DomainSerializer, UserSerializer
 
 
 logger = logging.getLogger(__name__)
@@ -26,16 +26,17 @@ class AliasViewSet(viewsets.ModelViewSet):
     @list_route(methods=['post'])
     def create_bulk(self, request):
         serializer = AliasSerializer(data=request.data, many=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @list_route(methods=['delete'])
     def delete_bulk(self, request):
-        serializer = AliasSerializer(data=request.data, many=True)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = AliasDeleteSerializer(data=request.data, many=True)
+
+        serializer.is_valid(raise_exception=True)
 
         # Ref: http://michelepasin.org/blog/2010/07/20/the-power-of-djangos-q-objects/
         q_list = map(lambda x: Q(**x), serializer.initial_data)
