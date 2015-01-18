@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 import logging
+import operator
+from django.db.models import Q
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -7,7 +9,7 @@ from rest_framework import status, filters, viewsets
 
 from dpdapi.filters import AliasRegexFilterBackend
 from dpdapi.models import Alias, Domain, User
-from dpdapi.serializers import AliasSerializer, AliasIdSerializer, DomainSerializer, UserSerializer
+from dpdapi.serializers import AliasSerializer, DomainSerializer, UserSerializer
 
 
 logger = logging.getLogger(__name__)
@@ -31,22 +33,25 @@ class AliasViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['delete'])
     def delete_bulk(self, request):
-        # FIXME, accept [{source: kak@stry.no, destination: lol@lol.com}] instead of IDs
-        serializer = AliasIdSerializer(data=request.data, many=True)
+        serializer = AliasSerializer(data=request.data, many=True)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        ids = map(lambda x: x['id'], serializer.initial_data)  # FIXME this might not be too great
-        aliases = Alias.objects.filter(id__in=ids)
-        diff = set(ids).difference(set(aliases.values_list('id', flat=True)))
-        logger.debug('Deleted: {}'.format(','.join(map(unicode, aliases))))
+        # Ref: http://michelepasin.org/blog/2010/07/20/the-power-of-djangos-q-objects/
+        q_list = map(lambda x: Q(**x), serializer.initial_data)
+        aliases = Alias.objects.filter(reduce(operator.or_, q_list))
+
+        initial_set = set(map(lambda x: (x['source'], x['destination'], x['domain']), serializer.initial_data))
+        deleted_set = set(aliases.values_list('source', 'destination', 'domain'))
+        diff = initial_set.difference(deleted_set)
+        logger.debug('Deleted: {}'.format(','.join(map(lambda x: '{0[0]}={0[1]}'.format(x), deleted_set))))
         aliases.delete()
 
         if diff:
-            res = "ID's '{}' could not be found and were not deleted.".format(", ".join(map(unicode, diff)))
+            diff_formatted = map(lambda x: '{0[0]}={0[1]}'.format(x), diff)
+            res = "Aliases '{}' could not be found and were not deleted.".format(", ".join(diff_formatted))
             logger.info(res)
-            result = res
-            return Response({"result": result}, status=status.HTTP_200_OK)
+            return Response({"result": res}, status=status.HTTP_200_OK)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

@@ -8,12 +8,6 @@ class AliasSerializer(serializers.ModelSerializer):
         model = Alias
 
 
-class AliasIdSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Alias
-        fields = ['id']
-
-
 class DomainSerializer(serializers.ModelSerializer):
     class Meta:
         model = Domain
