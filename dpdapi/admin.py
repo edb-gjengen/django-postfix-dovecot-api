@@ -7,6 +7,7 @@ from dpdapi.models import Alias, Domain, User
 class AliasAdmin(admin.ModelAdmin):
     list_display = ['source', 'destination', 'active', 'domain']
     list_filter = ['domain']
+    search_fields = ['source', 'destination']
 
 
 @admin.register(Domain)
