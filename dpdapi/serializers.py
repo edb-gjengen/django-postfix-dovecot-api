@@ -1,9 +1,13 @@
 from rest_framework import serializers
 from passlib.hash import sha512_crypt
 from .models import Alias, Domain, User
+from .fields import EmailOrDomainAliasField
 
 
 class AliasSerializer(serializers.ModelSerializer):
+    source = EmailOrDomainAliasField()
+    destination = EmailOrDomainAliasField()
+
     class Meta:
         model = Alias
 

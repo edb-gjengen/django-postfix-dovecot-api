@@ -17,6 +17,9 @@ Then, to deploy via login.neuf.no, add the following to your personal ~/.ssh/con
 Then you can do
 
     fab deploy
+    
+# TODO
+ - Domain Aliases
 
 # Inspiration:
 - http://modoboa.readthedocs.org/
