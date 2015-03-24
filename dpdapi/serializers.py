@@ -4,8 +4,15 @@ from .models import Alias, Domain, User
 
 
 class AliasSerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        # Workaround to accept duplicates
+        alias, created = Alias.objects.get_or_create(**validated_data)
+        return alias
+
     class Meta:
         model = Alias
+        validators = []  # Disable unique togheter check
 
 
 class AliasDeleteSerializer(serializers.ModelSerializer):
