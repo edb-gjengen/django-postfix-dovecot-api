@@ -7,6 +7,7 @@ class AliasSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # Workaround to accept duplicates
+        # FIXME, will fail with existing alias with validated_data['active']=False
         alias, created = Alias.objects.get_or_create(**validated_data)
         return alias
 
