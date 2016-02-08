@@ -21,6 +21,5 @@ def deploy():
         run('umask 022; python manage.py collectstatic --noinput')  # Collect static
         run('python manage.py migrate')  # Run DB migrations
 
-    # TODO: Supervisor
-    # Reload gunicorn
-    sudo('/etc/init.d/gunicorn reload', shell=False)
+    # Reload mxapi.neuf.no
+    sudo('/usr/bin/supervisorctl pid mxapi.neuf.no | xargs kill -HUP', shell=False)
