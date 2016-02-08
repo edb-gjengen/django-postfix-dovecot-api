@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 import logging
 import operator
+from django.utils import six
 from django.db.models import Q
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
@@ -11,6 +12,8 @@ from dpdapi.filters import AliasRegexFilterBackend
 from dpdapi.models import Alias, Domain, User
 from dpdapi.serializers import AliasSerializer, AliasDeleteSerializer, DomainSerializer, UserSerializer
 
+if six.PY3:
+    from functools import reduce
 
 logger = logging.getLogger(__name__)
 
