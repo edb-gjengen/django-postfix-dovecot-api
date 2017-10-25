@@ -14,6 +14,7 @@ class AliasSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alias
         validators = []  # Disable unique togheter check
+        fields = '__all__'
 
 
 class AliasDeleteSerializer(serializers.ModelSerializer):
@@ -25,11 +26,13 @@ class AliasDeleteSerializer(serializers.ModelSerializer):
 class DomainSerializer(serializers.ModelSerializer):
     class Meta:
         model = Domain
+        fields = '__all__'
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        fields = '__all__'
         extra_kwargs = {'password': {'write_only': True}}
 
     def _hash_password(self, raw_password):

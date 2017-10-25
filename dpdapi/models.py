@@ -1,6 +1,4 @@
-from __future__ import unicode_literals
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 
 
 class BaseModel(models.Model):
@@ -11,7 +9,6 @@ class BaseModel(models.Model):
         abstract = True
 
 
-@python_2_unicode_compatible
 class Alias(BaseModel):
     source = models.EmailField(max_length=254)
     destination = models.EmailField(max_length=254)
@@ -32,7 +29,6 @@ class Alias(BaseModel):
         unique_together = ('source', 'destination', 'domain')
 
 
-@python_2_unicode_compatible
 class Domain(BaseModel):
     name = models.CharField(max_length=254, unique=True)
 
@@ -45,7 +41,6 @@ class Domain(BaseModel):
         super(Domain, self).save(*args, **kwargs)
 
 
-@python_2_unicode_compatible
 class User(BaseModel):
     email = models.EmailField(max_length=254, unique=True)
     password = models.CharField(max_length=109)

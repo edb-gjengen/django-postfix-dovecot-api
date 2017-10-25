@@ -1,8 +1,8 @@
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic import RedirectView
-from rest_framework import urls as rest_framework_urls
 
+from rest_framework import urls as rest_framework_urls
 from dpdapi import urls as dpdapi_urls
 
 

@@ -1,19 +1,18 @@
 from __future__ import unicode_literals
 import logging
 import operator
-from django.utils import six
+
+from functools import reduce
 from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status, filters, viewsets
+from rest_framework import status, viewsets
 
-from dpdapi.filters import AliasRegexFilterBackend
+from dpdapi.filters import AliasFilter
 from dpdapi.models import Alias, Domain, User
 from dpdapi.serializers import AliasSerializer, AliasDeleteSerializer, DomainSerializer, UserSerializer
-
-if six.PY3:
-    from functools import reduce
 
 logger = logging.getLogger(__name__)
 
@@ -23,8 +22,8 @@ class AliasViewSet(viewsets.ModelViewSet):
     queryset = Alias.objects.all()
     serializer_class = AliasSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = (filters.DjangoFilterBackend, AliasRegexFilterBackend)
-    filter_fields = ('domain', 'domain__name',)
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = AliasFilter
 
     @list_route(methods=['post'])
     def create_bulk(self, request):
@@ -65,7 +64,7 @@ class DomainViewSet(viewsets.ModelViewSet):
     queryset = Domain.objects.all()
     serializer_class = DomainSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
     filter_fields = ('name',)
 
 
