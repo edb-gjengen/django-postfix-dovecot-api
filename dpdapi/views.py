@@ -1,29 +1,30 @@
 from __future__ import unicode_literals
 import logging
 import operator
-from django.utils import six
+
+from functools import reduce
 from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import list_route
+from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status, filters, viewsets
+from rest_framework import status, viewsets
+from rest_framework.viewsets import GenericViewSet
 
 from dpdapi.filters import AliasRegexFilterBackend
 from dpdapi.models import Alias, Domain, User
 from dpdapi.serializers import AliasSerializer, AliasDeleteSerializer, DomainSerializer, UserSerializer
 
-if six.PY3:
-    from functools import reduce
-
 logger = logging.getLogger(__name__)
 
 
-class AliasViewSet(viewsets.ModelViewSet):
+class AliasViewSet(ListModelMixin, GenericViewSet):
     """ Aliases """
     queryset = Alias.objects.all()
     serializer_class = AliasSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = (filters.DjangoFilterBackend, AliasRegexFilterBackend)
+    filter_backends = (DjangoFilterBackend, AliasRegexFilterBackend)
     filter_fields = ('domain', 'domain__name',)
 
     @list_route(methods=['post'])
@@ -65,7 +66,7 @@ class DomainViewSet(viewsets.ModelViewSet):
     queryset = Domain.objects.all()
     serializer_class = DomainSerializer
     permission_classes = [IsAuthenticated]
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
     filter_fields = ('name',)
 
 

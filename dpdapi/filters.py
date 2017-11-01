@@ -1,16 +1,16 @@
 import django_filters
+from rest_framework.filters import BaseFilterBackend
 
 from dpdapi.models import Alias
-from rest_framework.filters import BaseFilterBackend
 
 
 class AliasRegexFilter(django_filters.FilterSet):
-    # Ref: https://docs.djangoproject.com/en/1.7/ref/models/querysets/#iregex
-    source_regex = django_filters.CharFilter(name="source", lookup_type='iregex')
-    destination_regex = django_filters.CharFilter(name="destination", lookup_type='iregex')
-
     class Meta:
         model = Alias
+        fields = {
+            'source': ['iregex', 'regex'],
+            'destination': ['iregex', 'regex']
+        }
 
 
 class AliasRegexFilterBackend(BaseFilterBackend):
