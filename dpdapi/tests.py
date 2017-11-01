@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.test import override_settings
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
@@ -12,7 +13,7 @@ class RegexTestCase(APITestCase):
         user = User.objects.create(username='yolo')
         d = Domain.objects.create(name='example.com')
         for a in self.aliases:
-            Alias.objects.create(source=a, destination='@example.com', domain=d)
+            Alias.objects.create(source=a, destination='ninja@example.com', domain=d)
         self.client.force_login(user)
 
     def test_get_all(self):
@@ -24,7 +25,12 @@ class RegexTestCase(APITestCase):
         res = self.client.get(reverse('alias-list'), data=params)
         self.assertEqual(len(res.data), len(self.aliases))
 
+    def test_domain_filter_no_hits(self):
+        params = {'domain__name': 'zexample.com'}
+        res = self.client.get(reverse('alias-list'), data=params)
+        self.assertEqual(len(res.data), 0)
+
     def test_regex_filter(self):
-        params = {'source_regex': '^ops-|^ops@'}
+        params = {'source__regex': '^ops-|^ops@'}
         res = self.client.get(reverse('alias-list'), data=params)
         self.assertEqual(len(res.data), 1)
