@@ -21,6 +21,7 @@ class AliasDeleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alias
         validators = []  # No Unique togheter check on deletion
+        fields = '__all__'
 
 
 class DomainSerializer(serializers.ModelSerializer):

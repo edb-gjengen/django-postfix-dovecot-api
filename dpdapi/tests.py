@@ -1,5 +1,6 @@
+import json
+
 from django.contrib.auth.models import User
-from django.test import override_settings
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
@@ -11,9 +12,9 @@ class RegexTestCase(APITestCase):
 
     def setUp(self):
         user = User.objects.create(username='yolo')
-        d = Domain.objects.create(name='example.com')
+        self.domain = Domain.objects.create(name='example.com')
         for a in self.aliases:
-            Alias.objects.create(source=a, destination='ninja@example.com', domain=d)
+            Alias.objects.create(source=a, destination='ninja@example.com', domain=self.domain)
         self.client.force_login(user)
 
     def test_get_all(self):
@@ -34,3 +35,9 @@ class RegexTestCase(APITestCase):
         params = {'source__regex': '^ops-|^ops@'}
         res = self.client.get(reverse('alias-list'), data=params)
         self.assertEqual(len(res.data), 1)
+
+    def test_delete_bulk_single(self):
+        data = {'destination': 'ninja@example.com', 'source': 'ding@example.com', 'domain': self.domain.pk}
+        Alias.objects.create(source=data['source'], destination=data['destination'], domain=self.domain)
+        res = self.client.delete(reverse('alias-delete-bulk'), data=[data], format='json')
+        self.assertEqual(res.status_code, 204, res.data)
