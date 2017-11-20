@@ -1,0 +1,19 @@
+image: nikolaik/python-nodejs:latest
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/pip-cache"
+
+cache:
+  paths:
+    - "$CI_PROJECT_DIR/pip-cache"
+  key: "$CI_PROJECT_ID"
+
+before_script:
+  - pip install -r requirements.txt
+  - pip install coverage
+
+test:
+  script:
+    - coverage run --source=dpdapi --omit=dpdapi/migrations/* manage.py test -v2
+    - coverage report
+  coverage: '/TOTAL.+ ([0-9]{1,3}%)/'
