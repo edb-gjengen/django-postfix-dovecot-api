@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
                 ('updated', models.DateTimeField(auto_now=True)),
                 ('email', models.EmailField(unique=True, max_length=254)),
                 ('password', models.CharField(max_length=109)),
-                ('domain', models.ForeignKey(to='dpdapi.Domain')),
+                ('domain', models.ForeignKey(to='dpdapi.Domain', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='alias',
             name='domain',
-            field=models.ForeignKey(to='dpdapi.Domain'),
+            field=models.ForeignKey(to='dpdapi.Domain', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

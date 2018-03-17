@@ -12,7 +12,7 @@ class BaseModel(models.Model):
 class Alias(BaseModel):
     source = models.EmailField(max_length=254)
     destination = models.EmailField(max_length=254)
-    domain = models.ForeignKey('dpdapi.Domain')
+    domain = models.ForeignKey('dpdapi.Domain', models.CASCADE)
     active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -44,7 +44,7 @@ class Domain(BaseModel):
 class User(BaseModel):
     email = models.EmailField(max_length=254, unique=True)
     password = models.CharField(max_length=109)
-    domain = models.ForeignKey('dpdapi.Domain')
+    domain = models.ForeignKey('dpdapi.Domain', models.CASCADE)
 
     def __str__(self):
         return self.email
