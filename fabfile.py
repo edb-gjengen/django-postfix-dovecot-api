@@ -1,25 +1,22 @@
-from contextlib import contextmanager as _contextmanager
-from fabric.api import run, sudo, env, cd, prefix
+import os
 
-env.use_ssh_config = True
-env.hosts = ['lynx.neuf.no']
-env.project_path = '/var/www/neuf.no/django-postfix-dovecot-api'
-env.user = 'gitdeploy'
-env.activate = 'source {}/venv/bin/activate'.format(env.project_path)
+from fabric import Connection
+from invoke import task
 
 
-@_contextmanager
-def virtualenv():
-    with cd(env.project_path), prefix(env.activate):
-        yield
+@task()
+def deploy(c):
+    """Make sure proxy_user is set to your neuf username."""
+    project_path = '/var/www/neuf.no/django-postfix-dovecot-api'
+    proxy_user = os.getenv('DEPLOY_USER', os.getenv('USER'))
 
+    c = Connection(host='gitdeploy@lynx.neuf.no', gateway=Connection('login.neuf.no', user=proxy_user))
 
-def deploy():
-    with virtualenv():
-        run('git pull')  # Get source
-        run('pip install -r requirements.txt')  # install deps in virtualenv
-        run('umask 022; python manage.py collectstatic --noinput')  # Collect static
-        run('python manage.py migrate')  # Run DB migrations
+    with c.cd(project_path), c.prefix('source {}/venv/bin/activate'.format(project_path)):
+        c.run('git pull')  # Get source
+        c.run('pip install -r requirements.txt')  # install deps in virtualenv
+        c.run('umask 022; python manage.py collectstatic --noinput')  # Collect static
+        c.run('python manage.py migrate')  # Run DB migrations
 
     # Reload mxapi.neuf.no
-    sudo('/usr/bin/supervisorctl pid mxapi.neuf.no | xargs kill -HUP', shell=False)
+    c.sudo('/usr/bin/supervisorctl pid mxapi.neuf.no | xargs kill -HUP', shell=False)

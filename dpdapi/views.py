@@ -1,11 +1,10 @@
-from __future__ import unicode_literals
 import logging
 import operator
 
 from functools import reduce
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.decorators import list_route
+from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -25,9 +24,9 @@ class AliasViewSet(ListModelMixin, GenericViewSet):
     serializer_class = AliasSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = (DjangoFilterBackend, AliasRegexFilterBackend)
-    filter_fields = ('domain', 'domain__name',)
+    filterset_fields = ('domain', 'domain__name',)
 
-    @list_route(methods=['post'])
+    @action(detail=False, methods=['post'])
     def create_bulk(self, request):
         serializer = AliasSerializer(data=request.data, many=True)
 
@@ -36,7 +35,7 @@ class AliasViewSet(ListModelMixin, GenericViewSet):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @list_route(methods=['delete'])
+    @action(detail=False, methods=['delete'])
     def delete_bulk(self, request):
         serializer = AliasDeleteSerializer(data=request.data, many=True)
 
@@ -67,7 +66,7 @@ class DomainViewSet(viewsets.ModelViewSet):
     serializer_class = DomainSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('name',)
+    filterset_fields = ('name',)
 
 
 class UserViewSet(viewsets.ModelViewSet):

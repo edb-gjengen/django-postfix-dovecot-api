@@ -8,6 +8,10 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -25,11 +29,12 @@ ALLOWED_HOSTS = []
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'django.contrib.messages',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.staticfiles',
-    'raven.contrib.django.raven_compat',
+
     'django_extensions',
     'rest_framework',
     'django_filters',
@@ -106,7 +111,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'root': {
         'level': 'INFO',
-        'handlers': ['console', 'sentry'],
+        'handlers': ['console'],
     },
     'formatters': {
         'verbose': {
@@ -114,10 +119,6 @@ LOGGING = {
         },
     },
     'handlers': {
-        'sentry': {
-            'level': 'WARNING',
-            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
-        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -130,18 +131,18 @@ LOGGING = {
             'handlers': ['console'],
             'propagate': False,
         },
-        'raven': {
-            'level': 'WARNING',
-            'handlers': ['console'],
-            'propagate': False,
-        },
-        'sentry.errors': {
-            'level': 'WARNING',
-            'handlers': ['console'],
-            'propagate': False,
-        },
     },
 }
+
+SENTRY_DSN = os.getenv('SENTRY_DSN', 'https://0f0067c4548445a6867a471e2b69a419@sentry.neuf.no/2')
+if SENTRY_DSN:
+    SENTRY_ENVIRONMENT = os.getenv('SENTRY_ENVIRONMENT', 'production')
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        environment=SENTRY_ENVIRONMENT,
+        integrations=[DjangoIntegration()]
+    )
+
 
 try:
     from .local_settings import *
