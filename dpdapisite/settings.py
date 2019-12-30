@@ -134,7 +134,7 @@ LOGGING = {
     },
 }
 
-SENTRY_DSN = os.getenv('SENTRY_DSN', 'https://0f0067c4548445a6867a471e2b69a419@sentry.neuf.no/2')
+SENTRY_DSN = os.getenv('SENTRY_DSN', 'https://c7e6a47844484c0a81a98e10e48c1b71@sentry.neuf.no/8')
 if SENTRY_DSN:
     SENTRY_ENVIRONMENT = os.getenv('SENTRY_ENVIRONMENT', 'production')
     sentry_sdk.init(
