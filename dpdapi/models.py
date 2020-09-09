@@ -43,7 +43,7 @@ class Domain(BaseModel):
 
 class User(BaseModel):
     email = models.EmailField(max_length=254, unique=True)
-    password = models.CharField(max_length=109)
+    password = models.CharField(max_length=512)
     domain = models.ForeignKey('dpdapi.Domain', models.CASCADE)
 
     def __str__(self):
